@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 p-4 bg-light shadow rounded border border-2 border-dark d-flex flex-row-reverse">
+    <div class="book-cover-wrapper ms-4">
+        <img src="{% if book.image_id %}{{ url_for('image', image_id=book.image_id) }}{% endif %}" alt="Изображение книги" class="book-cover img-fluid rounded" />
+    </div>
+    <div class="book-info">
+        <h2 class="text-primary">{{ book.name }}</h2>
+        <h4>Издательство: <span class="text-muted">{{ book.publisher }}</span></h4>
+        <h4>Автор: <span class="text-muted">{{ book.author }}</span></h4>
+        <h4>Описание: <span class="text-muted preformatted-text">{{ book.brief_description | safe }}</span></h4>
+        <h4>Год написания: <span class="text-muted">{{ book.year }}</span></h4>
+        <h4>Объём (в страницах): <span class="text-muted">{{ book.volume }}</span></h4>
+        <h4>Жанр(ы): <span class="text-muted">
+            <ul class="list-unstyled">
+                {% for genre in genres %}
+                    <li><h5>{{ genre.name }}</h5></li>
+                {% endfor %}
+            </ul>
+        </span></h4>
+        <div class="mt-4 d-flex align-items-center">
+            <h5>Рейтинг:</h5>
+            <h5 class="text-warning d-flex align-items-center ms-2">
+                <svg class="bi bi-star mb-1 me-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                </svg>{{ book.rating | round(1) }}
+            </h5>
+        </div>
+        {% if current_user.is_authenticated and not review %}
+        <div class="text-center mt-4">
+            <a class="btn btn-primary" href="{{ url_for('reviews.review_post', book_id=book.id) }}">Написать рецензию</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container mt-5">
+    {% if current_user.is_authenticated and review %}
+    <div class="card mb-4 border border-warning border-3">
+        <div class="card-body d-flex">
+            <img src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}" class="rounded-circle me-3" alt="Изображение пользователя" style="width: 50px; height: 50px;">
+            <div>
+                <h5 class="card-title ">Ваша рецензия <span class="text-warning">
+                    <svg class="bi bi-star mb-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                    </svg>{{ review.mark }}</span></h5>
+                <p class="card-text preformatted-text">{{ review.text | safe }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% for rev in all_reviews %}
+    <div class="card mb-3">
+        <div class="card-body d-flex">
+            <img src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}" class="rounded-circle me-3" alt="Изображение пользователя" style="width: 50px; height: 50px;">
+            <div>
+                <h5 class="card-title">{{ rev.retrieve_user() }} <span class="text-warning">
+                    <svg class="bi bi-star mb-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                    </svg>{{ rev.mark }}</span></h5>
+                <p class="card-text preformatted-text">{{ rev.text | safe }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

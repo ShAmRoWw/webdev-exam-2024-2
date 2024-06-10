@@ -1,0 +1,54 @@
+{% macro book_form(genres, url, current_user, new_genres, book = {}) %}
+<form class="container py-4 px-5 border rounded shadow-sm bg-light" enctype="multipart/form-data" action="{{url}}" method="post">
+  
+  <div class="mb-4">
+    <label class="form-label" for="inputName">Название</label>
+    <input name="name" id="inputName" type="text" class="form-control" value="{{ book.name or '' }}">
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="inputDesc">Описание</label>
+    <textarea name="brief_description" id="inputDesc" class="form-control">{{ book.brief_description or '' }}</textarea>
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="inputYear">Год выпуска</label>
+    <input name="year" id="inputYear" type="text" class="form-control" value="{{ book.year or '' }}">
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="inputPublisher">Издательство</label>
+    <input name="publisher" id="inputPublisher" type="text" class="form-control" value="{{ book.publisher or '' }}">
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="inputAuthor">Автор</label>
+    <input name="author" id="inputAuthor" type="text" class="form-control" value="{{ book.author or '' }}">
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="inputVolume">Количество страниц</label>
+    <input name="volume" id="inputVolume" type="number" class="form-control" value="{{ book.volume or '' }}">
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label" for="inputGenres">Жанр(ы)</label>
+    <select name="genre_id" id="inputGenres" class="form-select" multiple>
+      {% for genre in genres %}
+      <option value="{{ genre.id }}" {% if genre.id|string in new_genres %} selected {% endif %}>{{ genre.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  {% if request.endpoint in ["books.new_book", "books.create_book"] %}
+  <div class="mb-4">
+    <label class="form-label" for="cover_img">Обложка</label>
+    <input name="cover_img" id="cover_img" type="file" class="form-control">
+  </div>
+  {% endif %}
+
+  <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+</form>
+
+<script src="{{ url_for('static', filename='easyMDE.js') }}"></script>
+{% endmacro %}
