@@ -27,6 +27,7 @@ init_login_manager(app)
 def index():
     current_page = request.args.get('page', 1, type=int)
     books_per_page = app.config['PER_PAGE']
+    # PER_PAGE = 3
     
     title = request.args.get('title', '').strip()
     author = request.args.get('author', '').strip()
@@ -55,6 +56,8 @@ def index():
     books_query = books_query.order_by(desc(Book.year)).limit(books_per_page).offset(books_per_page * (current_page - 1))
     
     books_info = [{'book': book, 'genres': book.genres} for book in books_query]
+    # print("************************************************************")
+    # print(books_info)
     
     total_pages = math.ceil(total_books_count / books_per_page)
     
@@ -62,7 +65,6 @@ def index():
     all_years = db.session.query(Book.year).distinct().order_by(Book.year.desc()).all()
     all_years = [year for year, in all_years]
     
-    # Для пагинации
     args = request.args.to_dict()
     args.pop('page', None)
     
@@ -81,5 +83,7 @@ def index():
 @app.route('/images/<image_id>')
 def image(image_id):
     img = db.get_or_404(Image, image_id)
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
+    return send_from_directory(app.config['UPLOAD_FOLDER'], 
                                img.stored_file_name)
+
+# UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media', 'images')

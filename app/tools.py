@@ -28,6 +28,8 @@ class ImageSaver:
                 os.path.join(app.config['UPLOAD_FOLDER'],
                             self.img.stored_file_name))
         return self.img
+    
+    # UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media', 'images')
 
     def save(self):
         self.img = self.__find_by_md5_hash()

@@ -120,9 +120,11 @@ class User(db.Model, UserMixin):
 
     def has_admin_rights(self):
         return self.role_id == current_app.config["ADMIN_ROLE_ID"]
+        # ADMIN_ROLE_ID = 1
 
     def has_moderator_rights(self):
         return self.role_id == current_app.config["MODERATOR_ROLE_ID"]
+        # MODERATOR_ROLE_ID = 2
 
     def can(self, action, record=None):
         check_rights = CheckRights(record)

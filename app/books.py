@@ -29,6 +29,7 @@ def create_book():
     if current_user.can("create"):
         from app import app
         allowed_params = params(app.config['ALLOWED_PARAMETERS'])
+        # ALLOWED_PARAMETERS = ["name", "brief_description", "year", "publisher", "author", "volume"]
 
         sanitized_params = {}
         for param in allowed_params:
@@ -94,6 +95,7 @@ def delete_post(book_id):
                 from app import app
                 if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], image.stored_file_name)):
                     os.remove(os.path.join(app.config['UPLOAD_FOLDER'], image.stored_file_name))
+                # UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media', 'images')
 
             else:
                 db.session.commit()
@@ -126,6 +128,7 @@ def update_book(book_id):
     if current_user.can("edit"):
         from app import app
         allowed_params = params(app.config['ALLOWED_PARAMETERS'])
+        # ALLOWED_PARAMETERS = ["name", "brief_description", "year", "publisher", "author", "volume"]
         sanitized_params = {key: bleach.clean(value) for key, value in allowed_params.items()}
         genre_ids = request.form.getlist('genre_id')
         all_genres = db.session.execute(db.select(Genre)).scalars()
